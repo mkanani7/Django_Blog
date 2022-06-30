@@ -1,1 +1,4 @@
 env/
+/blog/__pycache__/*.pyc
+
+/static

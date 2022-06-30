@@ -1,4 +1,4 @@
-from distutils.command.upload import upload
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -11,6 +11,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('posts:post_detail', args=[self.id])
 
 class Comment(models.Model):
     post = models.ForeignKey(to=Post, related_name='comments', on_delete=models.CASCADE)
