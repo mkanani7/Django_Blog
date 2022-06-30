@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -21,4 +22,4 @@ class Comment(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.id
+        return self.msg
