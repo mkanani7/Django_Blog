@@ -11,8 +11,17 @@ class PostListView(ListAPIView): # you can use APIView or even function base vie
     queryset = Post.objects.all()
     serializer_class = PostSerializer 
 
+    def post(self, request, format=None):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PostDetailView(APIView):
+
+    def perform_create(self, serializer):
+        print("perform create")
 
     def get(self, request, pk, format=None):
         try:
@@ -24,7 +33,7 @@ class PostDetailView(APIView):
         print(serializer)
         return Response(serializer.data)
         
-    def post(self, request, pk, format=None):
+    def put(self, request, pk, format=None):
         try:
             post = get_object_or_404(Post, pk=pk)
         except Post.DoesNotExist:
