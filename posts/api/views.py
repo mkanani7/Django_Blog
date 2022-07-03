@@ -1,3 +1,4 @@
+from gc import get_objects
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -20,24 +21,20 @@ class PostListView(ListAPIView): # you can use APIView or even function base vie
 
 class PostDetailView(APIView):
 
-    def perform_create(self, serializer):
-        print("perform create")
-
-    def get(self, request, pk, format=None):
+    def get_post_object(self, pk):
         try:
             post = get_object_or_404(Post, pk=pk)
+            return post
         except Post.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        print(post)
+
+    def get(self, request, pk, format=None):
+        post = self.get_post_object(pk)
         serializer = PostSerializer(post)
-        print(serializer)
         return Response(serializer.data)
         
     def put(self, request, pk, format=None):
-        try:
-            post = get_object_or_404(Post, pk=pk)
-        except Post.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        post = self.get_post_object(pk)
         
         serializer = PostSerializer(post, request.data)
         if serializer.is_valid():
