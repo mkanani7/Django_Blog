@@ -22,7 +22,7 @@ def login(request):
         form = UserLoginForm(request.POST)
         if form.is_valid():
             print('form is valid')
-
+            
     else:
         form = UserLoginForm()
 
