@@ -2,12 +2,17 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer
+from rest_framework.authtoken.models import Token
 
 @api_view(['POST'])
 def register_user(request):
     serializer = UserSerializer(data = request.data)
+    data = {}
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
+        user = serializer.save()
+        data["token"] = Token.objects.get(user=user).key
+        data["username"] = user.username
+        data["email"] = user.email
     else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = serializer.errors
+    return Response(data)
