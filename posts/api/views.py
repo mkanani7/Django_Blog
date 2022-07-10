@@ -4,6 +4,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import PostSerializer
 from ..models import Post
@@ -11,6 +12,7 @@ from ..models import Post
 class PostListView(ListAPIView): # you can use APIView or even function base view for this view.
     queryset = Post.objects.all()
     serializer_class = PostSerializer 
+    permission_classes = [IsAuthenticated,]
 
     def post(self, request, format=None):
         serializer = PostSerializer(data=request.data)
@@ -21,6 +23,7 @@ class PostListView(ListAPIView): # you can use APIView or even function base vie
 
 class PostDetailView(APIView):
 
+    permission_classes = [IsAuthenticated,]
     def get_post_object(self, pk):
         try:
             post = get_object_or_404(Post, pk=pk)
@@ -35,6 +38,10 @@ class PostDetailView(APIView):
         
     def put(self, request, pk, format=None):
         post = self.get_post_object(pk)
+
+        user = request.user
+        if post.author != user:
+            return Response({"Authentication Error" : "The user is not post creator!"})
         
         serializer = PostSerializer(post, request.data)
         if serializer.is_valid():
