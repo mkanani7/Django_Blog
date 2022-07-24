@@ -1,8 +1,13 @@
-from django.urls import path
+from xml.etree.ElementInclude import include
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
+router = DefaultRouter()
+router.register(r'posts', views.PostViewSet, basename="posts")
+
 urlpatterns = [
-    path('posts/', views.PostListView.as_view()),
-    path('post/<int:pk>/', views.PostDetailView.as_view()),
+    path('', include(router.urls))
 ]

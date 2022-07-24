@@ -24,6 +24,7 @@ class CustomLoginToken(ObtainAuthToken):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             print("serializer is valid")
-            return Response({"response" : "serializer is valid"})
+            print(serializer.validated_data["user"])
+            return Response({"response" : Token.objects.get(user=serializer.validated_data["user"].id).key})
         else:
             return Response({"response" : "serializer is not valid"})
